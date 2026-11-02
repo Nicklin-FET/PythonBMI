@@ -13,6 +13,7 @@ class BmiAppTests(unittest.TestCase):
         page = response.get_data(as_text=True)
         self.assertIn("了解自己的<br><em>健康狀況。</em>", page)
         self.assertIn("計算你的 BMI", page)
+        self.assertNotIn('class="bmi-chart"', page)
 
     def test_calculation_and_advice(self):
         response = self.client.post("/", data={"height": "170", "weight": "65"})
@@ -20,6 +21,26 @@ class BmiAppTests(unittest.TestCase):
         self.assertIn("22.5", page)
         self.assertIn("健康體位", page)
         self.assertIn("維持均衡飲食", page)
+
+    def test_chart_position_and_categories(self):
+        for bmi, category, position in [
+            (18.4, "體重過輕", 46.0),
+            (18.5, "健康體位", 46.25),
+            (24.0, "體重過重", 60.0),
+            (27.0, "肥胖", 67.5),
+            (40.0, "肥胖", 100.0),
+            (50.0, "肥胖", 100.0),
+            (0.1, "體重過輕", 0.25),
+        ]:
+            with self.subTest(bmi=bmi):
+                response = self.client.post("/", data={"height": "100", "weight": str(bmi)})
+                page = response.get_data(as_text=True)
+                self.assertEqual(response.status_code, 200)
+                self.assertIn('class="bmi-chart"', page)
+                self.assertIn(f'aria-label="BMI {bmi:.1f}，{category}。', page)
+                self.assertIn(f'class="bmi-chart-marker" style="left: {position}%;"', page)
+                for label in ["體重過輕", "健康體位", "體重過重", "肥胖", "40+"]:
+                    self.assertIn(label, page)
 
     def test_taiwan_adult_thresholds(self):
         for bmi, category in [
@@ -41,6 +62,7 @@ class BmiAppTests(unittest.TestCase):
                 self.assertEqual(response.status_code, 200)
                 self.assertIn('aria-invalid="true"', page)
                 self.assertNotIn("YOUR RESULT", page)
+                self.assertNotIn('class="bmi-chart"', page)
 
     def test_input_is_escaped(self):
         response = self.client.post("/", data={"height": '<script>alert(1)</script>', "weight": "65"})

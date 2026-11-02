@@ -67,6 +67,32 @@
                 </div>
                 <div class="result-divider"></div>
                 <span class="result-label">你的體位屬於 <strong>{{ result.label }}</strong></span>
+                {% set chart_bmi = [result.bmi | float, 40] | min %}
+                <figure class="bmi-chart">
+                  <figcaption>BMI 體位分布</figcaption>
+                  <div class="bmi-chart-plot" role="img" aria-label="BMI {{ result.bmi }}，{{ result.label }}。健康體位範圍為 18.5 至未滿 24；圖表刻度為 0 至 40，超過 40 的標記顯示於最右側。">
+                    <div class="bmi-chart-track" aria-hidden="true">
+                      <span class="bmi-band bmi-band-low"></span>
+                      <span class="bmi-band bmi-band-healthy"></span>
+                      <span class="bmi-band bmi-band-high"></span>
+                      <span class="bmi-band bmi-band-obese"></span>
+                    </div>
+                    <span class="bmi-chart-marker" style="left: {{ chart_bmi / 40 * 100 }}%;" aria-hidden="true"></span>
+                    <div class="bmi-chart-axis" aria-hidden="true">
+                      <span style="left: 0%;">0</span>
+                      <span style="left: 46.25%;">18.5</span>
+                      <span style="left: 60%;">24</span>
+                      <span style="left: 67.5%;">27</span>
+                      <span style="left: 100%;">40+</span>
+                    </div>
+                  </div>
+                  <ul class="bmi-chart-legend" aria-label="體位分類">
+                    <li><i class="range-dot low-dot" aria-hidden="true"></i>體重過輕</li>
+                    <li><i class="range-dot healthy-dot" aria-hidden="true"></i>健康體位</li>
+                    <li><i class="range-dot high-dot" aria-hidden="true"></i>體重過重</li>
+                    <li><i class="range-dot obese-dot" aria-hidden="true"></i>肥胖</li>
+                  </ul>
+                </figure>
                 <h2 id="result-title">給你的健康建議</h2>
                 <p>{{ result.advice }}</p>
                 <span class="result-decoration" aria-hidden="true">✳</span>

@@ -63,6 +63,22 @@ button span { font-size: 20px; font-weight: 400; }
 .result-divider { position: relative; z-index: 1; height: 1px; margin: 22px 0 25px; background: #b6cfb5; }
 .result-label { position: relative; z-index: 1; color: #5c735e; font-size: 14px; }
 .result-label strong { margin-left: 5px; color: #234f37; font-size: 18px; }
+.bmi-chart { position: relative; z-index: 1; margin: 26px 0 0; }
+.bmi-chart figcaption { margin-bottom: 18px; color: #405247; font-size: 13px; font-weight: 700; }
+.bmi-chart-plot { position: relative; }
+.bmi-chart-track { display: grid; grid-template-columns: 18.5fr 5.5fr 3fr 13fr; height: 16px; border-radius: 4px; overflow: hidden; }
+.bmi-band-low { background: #a2b8ca; }
+.bmi-band-healthy { background: #85b487; }
+.bmi-band-high { background: #e1c37d; }
+.bmi-band-obese { background: #ca977d; }
+.bmi-chart-marker { position: absolute; top: -6px; width: 4px; height: 28px; border-radius: 2px; background: #24352f; box-shadow: 0 0 0 2px #fff; transform: translateX(-50%); }
+.bmi-chart-axis { position: relative; height: 27px; margin-top: 9px; color: #405247; font-size: 10px; font-variant-numeric: tabular-nums; }
+.bmi-chart-axis span { position: absolute; transform: translateX(-50%); }
+.bmi-chart-axis span:first-child { transform: none; }
+.bmi-chart-axis span:last-child { transform: translateX(-100%); }
+.bmi-chart-legend { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 12px; margin: 0; padding: 0; color: #405247; font-size: 12px; list-style: none; }
+.bmi-chart-legend li { display: flex; align-items: center; gap: 7px; }
+.bmi-chart-legend .range-dot { flex-shrink: 0; }
 .result-panel h2 { position: relative; z-index: 1; margin: 31px 0 10px; font-size: 17px; }
 .result-panel p { position: relative; z-index: 1; max-width: 340px; margin: 0; color: #4f6657; font-size: 14px; line-height: 1.9; }
 .result-decoration { position: absolute; right: -30px; bottom: -87px; color: #d0e3ca; font-size: 260px; line-height: 1; }
