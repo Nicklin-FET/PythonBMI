@@ -1,8 +1,9 @@
-name: Deploy BMI to Azure Test Slot
+name: Deploy BMI PR to Azure Test Slot
 
 on:
   pull_request:
     branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - app.py
       - serve.py
