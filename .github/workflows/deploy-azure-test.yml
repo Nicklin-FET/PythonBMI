@@ -1,7 +1,7 @@
 name: Deploy BMI to Azure Test Slot
 
 on:
-  push:
+  pull_request:
     branches: [main]
     paths:
       - app.py
