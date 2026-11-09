@@ -13,6 +13,7 @@ class BmiAppTests(unittest.TestCase):
         page = response.get_data(as_text=True)
         self.assertIn("了解自己的<br><em>健康狀況。</em>", page)
         self.assertIn("計算你的 BMI", page)
+        self.assertIn('id="name" name="name" type="text" autocomplete="name"', page)
         self.assertNotIn('class="bmi-chart"', page)
 
     def test_calculation_and_advice(self):
@@ -21,6 +22,38 @@ class BmiAppTests(unittest.TestCase):
         self.assertIn("22.5", page)
         self.assertIn("健康體位", page)
         self.assertIn("維持均衡飲食", page)
+        self.assertIn("<p>維持均衡飲食", page)
+
+    def test_name_is_trimmed_and_included_in_advice(self):
+        response = self.client.post("/", data={"name": "  王小明  ", "height": "170", "weight": "65"})
+        page = response.get_data(as_text=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('value="王小明"', page)
+        self.assertIn("<p>王小明，維持均衡飲食", page)
+        self.assertIn("22.5", page)
+
+    def test_blank_name_keeps_generic_advice(self):
+        for name in ["", "   "]:
+            with self.subTest(name=name):
+                response = self.client.post("/", data={"name": name, "height": "170", "weight": "65"})
+                self.assertEqual(response.status_code, 200)
+                self.assertIn("<p>維持均衡飲食", response.get_data(as_text=True))
+
+    def test_name_is_preserved_when_measurements_are_invalid(self):
+        response = self.client.post("/", data={"name": "王小明", "height": "", "weight": "65"})
+        page = response.get_data(as_text=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('value="王小明"', page)
+        self.assertIn('aria-invalid="true"', page)
+        self.assertNotIn("YOUR RESULT", page)
+
+    def test_name_is_escaped_in_input_and_advice(self):
+        response = self.client.post("/", data={"name": '<script>alert("name")</script>', "height": "170", "weight": "65"})
+        page = response.get_data(as_text=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("<script>", page)
+        self.assertIn('value="&lt;script&gt;alert(&#34;name&#34;)&lt;/script&gt;"', page)
+        self.assertIn("<p>&lt;script&gt;alert(&#34;name&#34;)&lt;/script&gt;，維持均衡飲食", page)
 
     def test_chart_position_and_categories(self):
         for bmi, category, position in [
